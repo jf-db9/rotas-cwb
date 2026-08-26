@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub de Rotas & 10 Cargas Mescladas - Total Express Curitiba</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #0b1e36;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: #061424;
+            border-bottom: 4px solid #ffcc00;
+            padding: 25px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-badge {
+            background-color: #ffcc00;
+            color: #0b1e36;
+            font-weight: 900;
+            font-size: 24px;
+            padding: 5px 15px;
+            border-radius: 6px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        header p {
+            font-size: 13px;
+            color: #ffcc00;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        /* NAVEGAÇÃO ENTRE ABAS PRINCIPAIS */
+        .main-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: #112a4a;
+            color: #ffffff;
+            border: 2px solid #38bdf8;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #38bdf8;
+            color: #0b1e36;
+            border-color: #38bdf8;
+        }
+
+        /* PAINEL DE CONTROLE DE IMPRESSÃO / FILTRO */
+        .print-controls {
+            background: #112a4a;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-regiao {
+            background: #0b1e36;
+            color: #ffffff;
+            border: 2px solid #ffcc00;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-regiao:hover, .btn-regiao.active {
+            background: #ffcc00;
+            color: #0b1e36;
+        }
+
+        .btn-print-all {
+            background: #00c0f3 !important;
+            border-color: #00c0f3 !important;
+            color: #0b1e36 !important;
+        }
+
+        /* LAYOUT DE PÁGINA PARA CADA REGIÃO / ABA */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active-tab {
+            display: block;
+        }
+
+        .regiao-page {
+            background: #112a4a;
+            border-radius: 12px;
+            border-left: 8px solid #ffcc00;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            page-break-after: always;
+        }
+
+        .regiao-page.hidden {
+            display: none !important;
+        }
+
+        .regiao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255,255,255,0.15);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .regiao-title h2 {
+            font-size: 20px;
+            text-transform: uppercase;
+            color: #ffcc00;
+            font-weight: 900;
+        }
+
+        .regiao-title span {
+            font-size: 13px;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .regiao-icon {
+            font-size: 32px;
+        }
+
+        .descricao-mesclagem {
+            background: rgba(0, 192, 243, 0.15);
+            border-left: 4px solid #00c0f3;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #bae6fd;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* GRID DE ROTAS */
+        .rotas-print-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+        }
+
+        .rota-print-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #38bdf8;
+        }
+
+        .rota-badge-title {
+            background: #ffffff;
+            color: #0b1e36;
+            font-weight: 900;
+            font-size: 15px;
+            padding: 4px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .rota-bairros-list {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .rota-bairros-list strong {
+            color: #38bdf8;
+        }
+
+        /* Estilos específicos para aba de mesclagem */
+        .regiao-mesclada {
+            border-left-color: #00c0f3;
+            background: linear-gradient(135deg, #112a4a, #16355f);
+        }
+        .regiao-mesclada .regiao-title h2 { color: #00c0f3; }
+        .regiao-mesclada .rota-badge-title { background: #00c0f3; color: #0b1e36; }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #061424;
+            color: #94a3b8;
+            font-size: 12px;
+            border-radius: 0 0 12px 12px;
+            margin-top: 20px;
+        }
+
+        @media print {
+            body { background: #ffffff !important; color: #000000 !important; padding: 0; }
+            .container { max-width: 100%; }
+            header, .main-tabs, .print-controls, footer { display: none !important; }
+            .tab-content { display: block !important; }
+            .regiao-page {
+                background: #ffffff !important;
+                border: 2px solid #000000 !important;
+                border-left: 10px solid #0b1e36 !important;
+                color: #000000 !important;
+                box-shadow: none !important;
+                padding: 15px !important;
+                margin: 0 !important;
+                page-break-after: always;
+                page-break-inside: avoid;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+            }
+            .regiao-page.hidden { display: none !important; }
+            .regiao-header { border-bottom: 2px solid #000000 !important; margin-bottom: 12px !important; }
+            .regiao-title h2 { color: #0b1e36 !important; font-size: 18px !important; }
+            .descricao-mesclagem { background: #f1f5f9 !important; color: #0f172a !important; border-left-color: #0b1e36 !important; }
+            .rotas-print-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            .rota-print-card { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; border-left: 4px solid #0b1e36 !important; padding: 10px !important; }
+            .rota-badge-title { background: #0b1e36 !important; color: #ffffff !important; -webkit-print-color-adjust: exact; font-size: 12px !important; }
+            .rota-bairros-list { color: #1e293b !important; font-size: 11px !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <div class="logo-badge">TOTAL</div>
+                <h1>Hub Operacional — Curitiba e Região</h1>
+            </div>
+            <p>🖨️ Sistema de Expedição Total Express: Aba 1 (Divisão Padrão) e Aba 2 (10 Estratégias de Cargas Mescladas)</p>
+        </header>
+
+        <!-- SELETOR DE ABAS PRINCIPAIS -->
+        <div class="main-tabs">
+            <button class="tab-btn active" onclick="mudarAba('aba-padrao', this)">📁 Aba 1: Divisão Padrão por Região</button>
+            <button class="tab-btn" onclick="mudarAba('aba-mesclada', this)">🔄 Aba 2: 10 Cargas Mescladas (Otimizadas)</button>
+        </div>
+
+        <!-- ================= ABA 1: DIVISÃO PADRÃO ================= -->
+        <div id="aba-padrao" class="tab-content active-tab">
+            <div class="print-controls">
+                <button class="btn-regiao active" onclick="mostrarRegiao('todas', this)">🌐 Exibir Todas</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('noroeste', this)">📍 Noroeste</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('norte', this)">🌲 Norte</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('sul', this)">🏭 Sul</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('leste', this)">🏢 Leste</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('central', this)">⭐ Central</button>
+                <button class="btn-regiao btn-print-all" onclick="window.print()">🖨️ Imprimir Guia Atual</button>
+            </div>
+
+            <!-- REGIAO NOROESTE -->
+            <div class="regiao-page" id="regiao-noroeste">
+                <div class="regiao-header">
+                    <div class="regiao-title">
+                        <h2>Região Noroeste</h2>
+                        <span>Divisa: Almirante Tamandaré</span>
+                    </div>
+                    <div class="regiao-icon">📍</div>
+                </div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 10A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Campina do Siqueira, Cidade Industrial</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 12A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Mossunguê</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 12B</div><div class="rota-bairros-list"><strong>Bairros:</strong> Campo Comprido</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 22B</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bom Retiro, Butiatuvinha, Centro Cívico, Lamenha Pequena, Santa Felicidade, São Francisco</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 23A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Vista Alegre</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 25A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bigorrilho, Campina do Siqueira, Mercês</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 32A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Santa Felicidade, Santa Quitéria, Santo Inácio</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 48A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Seminário</div></div>
+                </div>
+            </div>
+
+            <!-- REGIAO NORTE -->
+            <div class="regiao-page" id="regiao-norte">
+                <div class="regiao-header">
+                    <div class="regiao-title">
+                        <h2>Região Norte</h2>
+                        <span>Divisa: Colombo</span>
+                    </div>
+                    <div class="regiao-icon">🌲</div>
+                </div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 02A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Cachoeira, Pilarzinho</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 03A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Ahú, Boa Vista, Cabral, Santa Cândida</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 04A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Cabral, Juvevê</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 05A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bacacheri</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 06A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bairro Alto</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 06E</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bairro Alto, Capão da Imbuia, Tarumã</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 08B</div><div class="rota-bairros-list"><strong>Bairros:</strong> Juvevê</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 26A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Santa Cândida</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 40A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Atuba, Bairro Alto</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 49A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Abranches, Barreirinha</div></div>
+                </div>
+            </div>
+
+            <!-- REGIAO SUL -->
+            <div class="regiao-page" id="regiao-sul">
+                <div class="regiao-header">
+                    <div class="regiao-title">
+                        <h2>Região Sul</h2>
+                        <span>Divisa: Araucária</span>
+                    </div>
+                    <div class="regiao-icon">🏭</div>
+                </div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 14A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Xaxim</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 15A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Boqueirão</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 16A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Sítio Cercado, Jardim Botânico</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 17A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Novo Mundo</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 18A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Augusta, Cidade Industrial, Fazendinha, Mossunguê</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 19A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Portão</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 24A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Canabrava, Cidade Industrial, São Miguel, Vila Sabará</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 28A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Hauer</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 29A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Alto Boqueirão, Campo de Santana, Caximba, Ganchinho, Tingui, Umbará</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 47A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Pinheirinho</div></div>
+                </div>
+            </div>
+
+            <!-- REGIAO LESTE -->
+            <div class="regiao-page" id="regiao-leste">
+                <div class="regiao-header">
+                    <div class="regiao-title">
+                        <h2>Região Leste</h2>
+                        <span>Divisa: Pinhais</span>
+                    </div>
+                    <div class="regiao-icon">🏢</div>
+                </div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 07A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Uberaba</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 33A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Guabirotuba</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 38A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Cajuru</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 41A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Jardim das Américas</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 41D / 41E</div><div class="rota-bairros-list"><strong>Bairros:</strong> Boqueirão</div></div>
+                </div>
+            </div>
+
+            <!-- REGIAO CENTRAL -->
+            <div class="regiao-page regiao-central" id="regiao-central">
+                <div class="regiao-header">
+                    <div class="regiao-title">
+                        <h2>Região Central</h2>
+                        <span>Núcleo Urbano e Comercial</span>
+                    </div>
+                    <div class="regiao-icon">⭐</div>
+                </div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 08A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Cristo Rei, Jardim Botânico</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 09A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Água Verde, Rebouças</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 11A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Araucária, Centro, Lindóia</div>
+                </div>
+                <div class="rota-print-card"><div class="rota-badge-title">Rota 13A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Água Verde, Batel</div></div>
+                <div class="rota-print-card"><div class="rota-badge-title">Rota 21A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Água Verde, Batel, Vila Izabel</div></div>
+                <div class="rota-print-card"><div class="rota-badge-title">Rota 22A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bom Retiro, Centro Cívico, Juvevê, Vista Alegre</div></div>
+                <div class="rota-print-card"><div class="rota-badge-title">Rota 45A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Alto da Rua XV</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ABA 2: 10 CARGAS MESCLADAS ================= -->
+        <div id="aba-mesclada" class="tab-content">
+            <div class="print-controls">
+                <button class="btn-regiao btn-print-all" onclick="window.print()">🖨️ Imprimir Cargas Mescladas (10 Estratégias)</button>
+            </div>
+
+            <!-- Combinação 1 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>1. Eixo Sul + Central (Corredor Linha Verde)</h2><span>Sul & Miolo Sul-Central</span></div>
+                    <div class="regiao-icon">🚛</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Otimiza motoristas que entram pela BR-476 e sobem pela Linha Verde descarregando no Boqueirão, Novo Mundo, Portão, Água Verde e Rebouças.</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 15A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Boqueirão</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 17A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Novo Mundo</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 19A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Portão</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 09A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Água Verde, Rebouças</div></div>
+                </div>
+            </div>
+
+            <!-- Combinação 2 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>2. Eixo Norte + Noroeste (Vetores de Divisa)</h2><span>Colombo & Tamandaré</span></div>
+                    <div class="regiao-icon">🚐</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Agrupa as entregas das bordas norte e noroeste (Pilarzinho, Cachoeira, Santa Cândida e Santa Felicidade) para distribuição conjunta.</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 02A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Cachoeira, Pilarzinho</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 03A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Ahú, Boa Vista, Cabral, Santa Cândida</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 22B</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bom Retiro, Butiatuvinha, Santa Felicidade</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 26A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Santa Cândida</div></div>
+                </div>
+            </div>
+
+            <!-- Combinação 3 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>3. Corredor Leste + Central Comercial</h2><span>Cajuru & Rua XV / Alto da XV</span></div>
+                    <div class="regiao-icon">🚚</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Liga a grande saída para Pinhais (Cajuru e Uberaba) direto com os bairros comerciais centrais adjacentes (Cristo Rei, Jd. Botânico e Alto da XV).</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 38A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Cajuru</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 07A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Uberaba</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 08A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Cristo Rei, Jardim Botânico</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 45A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Alto da Rua XV</div></div>
+                </div>
+            </div>
+
+            <!-- Combinação 4 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>4. Mutirão da Zona Sul Profunda (Populosos)</h2><span>Sítio Cercado, Xaxim & Pinheirinho</span></div>
+                    <div class="regiao-icon">📦</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Destinada a caminhões/vans de grande porte que precisam descarregar volumes massivos nos bairros mais populosos da zona sul de Curitiba.</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 16A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Sítio Cercado, Jardim Botânico</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 14A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Xaxim</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 47A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Pinheirinho</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 29A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Alto Boqueirão, Caximba, Umbará</div></div>
+                </div>
+            </div>
+
+            <!-- Combinação 5 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>5. Eixo Industrial e Transição Oeste</h2><span>CIC, Fazendinha & Campo Comprido</span></div>
+                    <div class="regiao-icon">🏭</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Concentra a mega região industrial da CIC com as rotas de ligação para o Campo Comprido e Fazendinha, otimizando entregas corporativas e B2B.</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 18A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Augusta, CIC, Fazendinha</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 24A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Canabrava, CIC, São Miguel</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 12B</div><div class="rota-bairros-list"><strong>Bairros:</strong> Campo Comprido</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 10A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Campina do Siqueira, CIC</div></div>
+                </div>
+            </div>
+
+            <!-- Combinação 6 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>6. Miolo Nobre e Comercial de Alta Densidade</h2><span>Batel, Mercês, Bigorrilho & Centro</span></div>
+                    <div class="regiao-icon">⭐</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Carga focada em prédios comerciais e residenciais verticais de alto fluxo, permitindo entregas encrespadas em curtas distâncias a pé pela van.</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 13A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Água Verde, Batel</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 25A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bigorrilho, Mercês</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 21A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Batel, Vila Izabel</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 11A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Lindóia</div></div>
+                </div>
+            </div>
+
+            <!-- Combinação 7 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>7. Anel Cívico, Norte e Barreirinha</h2><span>Centro Cívico, Bom Retiro & Barreirinha</span></div>
+                    <div class="regiao-icon">🏢</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Une o eixo administrativo do Centro Cívico com os bairros tradicionais da zona norte/noroeste via Av. Anita Garibaldi e Rod. dos Minérios.</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 22A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Centro Cívico, Bom Retiro, Juvevê</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 49A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Abranches, Barreirinha</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 04A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Cabral, Juvevê</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 08B</div><div class="rota-bairros-list"><strong>Bairros:</strong> Juvevê</div></div>
+                </div>
+            </div>
+
+            <!-- Combinação 8 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>8. Eixo Leste Residencial & Guabirotuba</h2><span>Jardim das Américas & Guabirotuba</span></div>
+                    <div class="regiao-icon">🏡</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Otimiza entregas residenciais de classe média/alta no vetor leste, aproveitando os acessos rápidos pela Rodovia das Torres.</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 41A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Jardim das Américas</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 33A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Guabirotuba</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 41D / 41E</div><div class="rota-bairros-list"><strong>Bairros:</strong> Boqueirão</div></div>
+                </div>
+            </div>
+
+            <!-- Combinação 9 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>9. Mutirão dos Bairros Altos e Atuba</h2><span>Bairro Alto & Atuba</span></div>
+                    <div class="regiao-icon">🌲</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Concentra os volumes destinados ao Bairro Alto e Atuba, facilitando o escoamento na região nordeste da capital.</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 06A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bairro Alto</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 06E</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bairro Alto, Capão da Imbuia, Tarumã</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 40A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Atuba, Bairro Alto</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 05A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Bacacheri</div></div>
+                </div>
+            </div>
+
+            <!-- Combinação 10 -->
+            <div class="regiao-page regiao-mesclada">
+                <div class="regiao-header">
+                    <div class="regiao-title"><h2>10. Transversal Oeste-Noroeste</h2><span>Santa Felicidade, Vista Alegre & Seminário</span></div>
+                    <div class="regiao-icon">🗺️</div>
+                </div>
+                <div class="descricao-mesclagem">💡 <strong>Estratégia:</strong> Rota de interligação transversal conectando a gastronomia e polos de Santa Felicidade com os bairros residenciais do Seminário e Vista Alegre.</div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 32A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Santa Felicidade, Santa Quitéria</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 23A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Vista Alegre</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 48A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Seminário</div></div>
+                    <div class="rota-print-card"><div class="rota-badge-title">Rota 12A</div><div class="rota-bairros-list"><strong>Bairros:</strong> Mossunguê</div></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Guia Operacional de Expedição — Total Express Curitiba
+        </footer>
+    </div>
+
+    <script>
+        function mudarAba(idAba, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(idAba).classList.add('active-tab');
+            btnElement.classList.add('active');
+        }
+
+        function mostrarRegiao(regiao, btn) {
+            document.querySelectorAll('#aba-padrao .btn-regiao').forEach(b => {
+                if(!b.classList.contains('btn-print-all')) b.classList.remove('active');
+            });
+            if(!btn.classList.contains('btn-print-all')) btn.classList.add('active');
+
+            const pages = document.querySelectorAll('#aba-padrao .regiao-page');
+            pages.forEach(page => {
+                if (regiao === 'todas' || page.id === 'regiao-' + regiao) {
+                    page.classList.remove('hidden');
+                } else {
+                    page.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
