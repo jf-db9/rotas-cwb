@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub de Rotas & Volumetria Real - Total Express Curitiba, Região & Litoral</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #0b1e36;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: #061424;
+            border-bottom: 4px solid #ffcc00;
+            padding: 25px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-badge {
+            background-color: #ffcc00;
+            color: #0b1e36;
+            font-weight: 900;
+            font-size: 24px;
+            padding: 5px 15px;
+            border-radius: 6px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        header p {
+            font-size: 13px;
+            color: #ffcc00;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        /* NAVEGAÇÃO ENTRE ABAS PRINCIPAIS */
+        .main-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #112a4a;
+            color: #ffffff;
+            border: 2px solid #38bdf8;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #38bdf8;
+            color: #0b1e36;
+            border-color: #38bdf8;
+        }
+
+        /* PAINEL DE CONTROLE DE IMPRESSÃO / FILTRO */
+        .print-controls {
+            background: #112a4a;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-regiao {
+            background: #0b1e36;
+            color: #ffffff;
+            border: 2px solid #ffcc00;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .btn-regiao:hover, .btn-regiao.active {
+            background: #ffcc00;
+            color: #0b1e36;
+        }
+
+        .btn-print-all {
+            background: #00c0f3 !important;
+            border-color: #00c0f3 !important;
+            color: #0b1e36 !important;
+        }
+
+        /* LAYOUT DE PÁGINA PARA CADA REGIÃO / ABA */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active-tab {
+            display: block;
+        }
+
+        .regiao-page {
+            background: #112a4a;
+            border-radius: 12px;
+            border-left: 8px solid #ffcc00;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .regiao-page.hidden {
+            display: none !important;
+        }
+
+        .regiao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255,255,255,0.15);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .regiao-title h2 {
+            font-size: 18px;
+            text-transform: uppercase;
+            color: #ffcc00;
+            font-weight: 900;
+        }
+
+        .regiao-title span {
+            font-size: 12px;
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        .regiao-icon {
+            font-size: 28px;
+        }
+
+        /* GRID DE ROTAS */
+        .rotas-print-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+        }
+
+        .rota-print-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid #38bdf8;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+        }
+
+        .rota-badge-title {
+            background: #ffffff;
+            color: #0b1e36;
+            font-weight: 900;
+            font-size: 22px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            display: inline-block;
+            text-align: center;
+            margin-bottom: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            letter-spacing: 1.5px;
+        }
+
+        .rota-bairros-list {
+            font-size: 12px;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .rota-bairros-list strong {
+            color: #38bdf8;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .cidade-tag {
+            background: rgba(255, 204, 0, 0.2);
+            color: #ffcc00;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        /* ESTILO ESPECÍFICO PARA ABA 3 (DRAG & DROP) */
+        .kanban-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .kanban-container { grid-template-columns: 1fr; }
+        }
+
+        .kanban-col {
+            background: #112a4a;
+            border-radius: 12px;
+            padding: 20px;
+            border-top: 5px solid #00c0f3;
+            min-height: 500px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .kanban-col h3 {
+            color: #00c0f3;
+            font-size: 16px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            background: #0b1e36;
+            border: 2px solid #38bdf8;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .search-box:focus { outline: none; border-color: #ffcc00; }
+
+        .draggable-card {
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 4px solid #ffcc00;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+
+        .draggable-card:active { cursor: grabbing; }
+        .draggable-card:hover { background: rgba(0, 0, 0, 0.7); }
+
+        .drop-zone {
+            background: #0b1e36;
+            border: 3px dashed #38bdf8;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .drop-zone.drag-over {
+            background: rgba(56, 189, 248, 0.15);
+            border-color: #ffcc00;
+        }
+
+        .drop-item {
+            background: #16355f;
+            border-left: 4px solid #00c0f3;
+            padding: 12px;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .btn-remove {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-drop-msg {
+            color: #64748b;
+            text-align: center;
+            margin-top: 100px;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .print-header-badge {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #061424;
+            color: #94a3b8;
+            font-size: 12px;
+            border-radius: 0 0 12px 12px;
+            margin-top: 20px;
+        }
+
+        /* ================= IMPRESSÃO RETRATO (PORTRAIT) COM SMART SCALE ================= */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 8mm;
+            }
+
+            body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; }
+            .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            header, .main-tabs, .print-controls, footer, .kanban-col:first-child { display: none !important; }
+            .tab-content { display: block !important; }
+
+            .print-header-badge {
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 2.5px solid #000000;
+                padding-bottom: 6px;
+                margin-bottom: 12px;
+            }
+
+            .print-header-badge .p-logo {
+                font-weight: 900;
+                font-size: 14pt;
+                background: #000;
+                color: #fff;
+                padding: 3px 8px;
+                border-radius: 4px;
+            }
+
+            .print-header-badge .p-title {
+                font-weight: 700;
+                font-size: 11pt;
+                text-transform: uppercase;
+                color: #000;
+            }
+
+            .regiao-page {
+                background: #ffffff !important;
+                border: 2px solid #000000 !important;
+                border-left: 8px solid #000000 !important;
+                box-shadow: none !important;
+                padding: 10mm !important;
+                margin: 0 !important;
+                height: 281mm !important;
+                max-height: 281mm !important;
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+            }
+
+            .regiao-page.hidden { display: none !important; }
+
+            .regiao-header {
+                border-bottom: 2px solid #000000 !important;
+                margin-bottom: 15px !important;
+                padding-bottom: 8px !important;
+            }
+
+            .regiao-title h2 { color: #000000 !important; font-size: 16pt !important; }
+            .regiao-title span { color: #334155 !important; font-size: 10pt !important; }
+            .regiao-icon { font-size: 22pt !important; }
+
+            .rotas-print-grid {
+                display: grid !important;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+                gap: 15px !important;
+                flex-grow: 1 !important;
+                align-content: stretch !important;
+            }
+
+            .rota-print-card {
+                background: #ffffff !important;
+                border: 2px solid #334155 !important;
+                border-left: 6px solid #000000 !important;
+                padding: 15px !important;
+                page-break-inside: avoid !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+            }
+
+            .rota-badge-title {
+                background: #000000 !important;
+                color: #ffffff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-size: 22pt !important;
+                padding: 10px !important;
+                margin-bottom: 10px !important;
+                text-align: center !important;
+                letter-spacing: 2px !important;
+            }
+
+            .rota-bairros-list { color: #1e293b !important; font-size: 11pt !important; line-height: 1.4 !important; }
+            .rota-bairros-list strong { color: #000000 !important; font-size: 10pt !important; }
+            .cidade-tag { background: #e2e8f0 !important; color: #000000 !important; border: 1px solid #64748b !important; font-size: 9pt !important; padding: 3px 6px !important; margin-bottom: 6px !important; }
+
+            /* ABA 4 (ROTEIRIZAÇÃO LIVRE) NO PRINT COM SMART SCALE */
+            #aba-livre.active-tab {
+                height: 281mm !important;
+                max-height: 281mm !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: flex-start !important;
+                page-break-after: always !important;
+            }
+
+            .kanban-col {
+                background: #ffffff !important;
+                border: 2px solid #000000 !important;
+                border-left: 10px solid #000000 !important;
+                box-shadow: none !important;
+                padding: 15px !important;
+                width: 100% !important;
+                flex-grow: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            .kanban-col h3, .kanban-col p, .search-box { display: none !important; }
+
+            .drop-zone {
+                border: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 15px !important;
+                flex-grow: 1 !important;
+                align-content: stretch !important;
+            }
+
+            .drop-item {
+                background: #ffffff !important;
+                border: 2px solid #334155 !important;
+                border-left: 6px solid #000000 !important;
+                padding: 15px !important;
+                page-break-inside: avoid !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+            }
+
+            .btn-remove { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo-area">
+                <div class="logo-badge">TOTAL</div>
+                <h1>Hub Operacional — Curitiba, Região & Litoral</h1>
+            </div>
+            <p>🖨️ Sistema de Expedição Total Express: Cidades Metropolitanas Separadas, Litoral e Roteirização Livre</p>
+        </header>
+
+        <!-- SELETOR DE ABAS PRINCIPAIS -->
+        <div class="main-tabs">
+            <button class="tab-btn active" onclick="mudarAba('aba-curitiba', this)">🏙️ Curitiba (Por Regiões)</button>
+            <button class="tab-btn" onclick="mudarAba('aba-metropolitana', this)">🚐 Região Metropolitana</button>
+            <button class="tab-btn" onclick="mudarAba('aba-litoral', this)">🏖️ Litoral</button>
+            <button class="tab-btn" onclick="mudarAba('aba-livre', this)">✨ Roteirização Livre</button>
+        </div>
+
+        <!-- ================= ABA 1: CURITIBA ================= -->
+        <div id="aba-curitiba" class="tab-content active-tab">
+            <div class="print-controls">
+                <button class="btn-regiao active" onclick="mostrarRegiao('cwb', 'todas', this)">🌐 Exibir Todas</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('cwb', 'noroeste', this)">📍 Noroeste</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('cwb', 'norte', this)">🌲 Norte</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('cwb', 'sul', this)">🏭 Sul</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('cwb', 'leste', this)">🏢 Leste</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('cwb', 'central', this)">⭐ Central</button>
+                <button class="btn-regiao btn-print-all" onclick="window.print()">🖨️ Imprimir Guia A4 Atual</button>
+            </div>
+
+            <div class="regiao-page" id="cwb-noroeste">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Noroeste - Curitiba</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Região Noroeste</h2><span>Divisa: Almirante Tamandaré / Eixo Oeste</span></div><div class="regiao-icon">📍</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[10A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Campina do Siqueira, Cidade Industrial, São Braz</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[12A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Mossunguê</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[12B]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Campo Comprido</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[22B]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Santa Felicidade, Bom Retiro, Centro Cívico, Butiatuvinha, Lamenha Pequena, São Francisco</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[23A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Vista Alegre</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[25A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Bigorrilho, Mercês, Campina do Siqueira</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[32A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Santa Felicidade, Santo Inácio, Santa Quitéria</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[48A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Seminário</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="cwb-norte">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Norte - Curitiba</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Região Norte</h2><span>Divisa: Colombo / Vetores Norte</span></div><div class="regiao-icon">🌲</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[02A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Abranches, Pilarzinho, Cachoeira</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[03A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Ahú, Boa Vista, Cabral, Santa Cândida</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[04A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Cabral, Juvevê</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[05A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Bacacheri</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[06A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Bairro Alto</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[06E]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Bairro Alto, Capão da Imbuia, Tarumã</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[08B]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Juvevê</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[26A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Santa Cândida</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[40A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Atuba, Bairro Alto</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[49A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Barreirinha, Abranches</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="cwb-sul">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Sul - Curitiba</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Região Sul</h2><span>Divisa: Araucária / Zona Sul Populosa</span></div><div class="regiao-icon">🏭</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[14A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Xaxim</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[15A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Boqueirão</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[16A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Sítio Cercado, Jardim Botânico</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[17A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Novo Mundo</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[18A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Cidade Industrial, Fazendinha, Mossunguê, Augusta</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[19A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Portão</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[24A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Cidade Industrial, São Miguel, Canabrava, Vila Sabará</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[28A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Hauer</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[29A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Umbará, Alto Boqueirão, Caximba, Campo de Santana, Ganchinho, Tingui</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[47A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Pinheirinho</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="cwb-leste">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Leste - Curitiba</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Região Leste</h2><span>Divisa: Pinhais / Corredor Leste</span></div><div class="regiao-icon">🏢</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[07A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Uberaba</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[33A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Guabirotuba</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[38A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Cajuru</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[41A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Jardim das Américas</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[41D]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Boqueirão</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[41E]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Boqueirão</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="cwb-central">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Central - Curitiba</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Região Central</h2><span>Núcleo Urbano & Comercial de Alta Densidade</span></div><div class="regiao-icon">⭐</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[01A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Bigorrilho</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[08A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Cristo Rei, Jardim Botânico</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[09A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Água Verde, Rebouças</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[11A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Lindóia, Araucária</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[13A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Água Verde, Batel</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[21A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Batel, Vila Izabel, Água Verde</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[22A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro Cívico, Bom Retiro, Juvevê, Vista Alegre</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[45A]</span><span class="cidade-tag">CURITIBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Alto da Rua XV</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ABA 2: REGIÃO METROPOLITANA ================= -->
+        <div id="aba-metropolitana" class="tab-content">
+            <div class="print-controls">
+                <button class="btn-regiao active" onclick="mostrarRegiao('met', 'todas', this)">🌐 Exibir Todas</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'sjp', this)">✈️ SJP</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'pinhais', this)">🏢 Pinhais</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'araucaria', this)">🏭 Araucária</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'colombo', this)">🌲 Colombo</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'campolargo', this)">🛣️ Campo Largo</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'fazenda', this)">🏡 Fazenda R.G.</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'piraquara', this)">🌊 Piraquara</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'cgs', this)">🌿 C. G. do Sul</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'cmg', this)">⛰️ Campo Magro</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'tamandare', this)">🏕️ Tamandaré [AL1/AL2]</button>
+                <button class="btn-regiao" onclick="mostrarRegiao('met', 'itarubrasil', this)">📌 ITA & RBS</button>
+                <button class="btn-regiao btn-print-all" onclick="window.print()">🖨️ Imprimir Guia A4 Atual</button>
+            </div>
+
+            <div class="regiao-page" id="met-sjp">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - São José dos Pinhais</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>São José dos Pinhais</h2><span>Polo Aeroporto & Eixo Sul Metropolitano</span></div><div class="regiao-icon">✈️</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[SJ1]</span><span class="cidade-tag">SÃO JOSÉ DOS PINHAIS</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Afonso Pena, Boneca do Iguaçu, Quissisana</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[SJ2]</span><span class="cidade-tag">SÃO JOSÉ DOS PINHAIS</span><div class="rota-bairros-list"><strong>Bairros:</strong> Rio Pequeno, Jurema, Aristocrata, Costeira</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[SJ3]</span><span class="cidade-tag">SÃO JOSÉ DOS PINHAIS</span><div class="rota-bairros-list"><strong>Bairros:</strong> Guatupê, Cachoeira, Mergulhão, Tomás Coelho</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[SJ4]</span><span class="cidade-tag">SÃO JOSÉ DOS PINHAIS</span><div class="rota-bairros-list"><strong>Bairros:</strong> Iná, Murici, Campo Largo da Roseira, Roseira</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[SJ5]</span><span class="cidade-tag">SÃO JOSÉ DOS PINHAIS</span><div class="rota-bairros-list"><strong>Bairros:</strong> Zaniolo, Afonso Pena, Quissisana</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[SJ6]</span><span class="cidade-tag">SÃO JOSÉ DOS PINHAIS</span><div class="rota-bairros-list"><strong>Bairros:</strong> Área Rural, Miringuava, Campo Largo da Roseira</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-pinhais">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Pinhais</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Pinhais</h2><span>Eixo Leste Industrial e Comercial</span></div><div class="regiao-icon">🏢</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[PH1]</span><span class="cidade-tag">PINHAIS</span><div class="rota-bairros-list"><strong>Bairros:</strong> Vargem Grande, Jardim Cláudia, Centro, Emiliano Perneta</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[PH3]</span><span class="cidade-tag">PINHAIS</span><div class="rota-bairros-list"><strong>Bairros:</strong> Alto Tarumã, Maria Antonieta, Pineville</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-araucaria">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Araucária</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Araucária</h2><span>Eixo Sudoeste Industrial</span></div><div class="regiao-icon">🏭</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[AR1]</span><span class="cidade-tag">ARAUCÁRIA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Costeira, Campina da Barra, Iguaçu</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[AR2]</span><span class="cidade-tag">ARAUCÁRIA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Costeira, Campina da Barra, Iguaçu, Tindiquera</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-colombo">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Colombo</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Colombo</h2><span>Polo Operacional Metropolitano Norte</span></div><div class="regiao-icon">🌲</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[CB1]</span><span class="cidade-tag">COLOMBO</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Roça Grande, Gabirobal, Imbuial</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[CB3]</span><span class="cidade-tag">COLOMBO</span><div class="rota-bairros-list"><strong>Bairros:</strong> Guarani, Atuba, Palmital, São Gabriel, Santa Terezinha</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-campolargo">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Campo Largo</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Campo Largo</h2><span>Eixo Rodovia BR-277 Oeste</span></div><div class="regiao-icon">🛣️</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[CP1]</span><span class="cidade-tag">CAMPO LARGO</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Cristo Rei, Jardim Esmeralda, Vila Itaqui</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[CP3]</span><span class="cidade-tag">CAMPO LARGO</span><div class="rota-bairros-list"><strong>Bairros:</strong> Bateias, Vila Dom Pedro, Vila Elizabeth</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-fazenda">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Fazenda Rio Grande</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Fazenda Rio Grande</h2><span>Eixo Sul Profundo Metropolitano</span></div><div class="regiao-icon">🏡</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[FA1]</span><span class="cidade-tag">FAZENDA RIO GRANDE</span><div class="rota-bairros-list"><strong>Bairros:</strong> Estados, Iguaçu, Santa Terezinha, Pioneiros</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[FA2]</span><span class="cidade-tag">FAZENDA RIO GRANDE</span><div class="rota-bairros-list"><strong>Bairros:</strong> Eucaliptos, Nações, Gralha Azul</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-piraquara">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Piraquara</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Piraquara</h2><span>Eixo Leste Estendido</span></div><div class="regiao-icon">🌊</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[PR1]</span><span class="cidade-tag">PIRAQUARA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Guarituba, Jardim Itiberê, Planta Vera Cruz</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[PR2]</span><span class="cidade-tag">PIRAQUARA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Guarituba, Planta Vera Cruz, Vila Vicente Macedo</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-cgs">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Campina Grande do Sul</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Campina Grande do Sul</h2><span>Eixo Rodovia BR-116 Norte</span></div><div class="regiao-icon">🌿</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[CGS]</span><span class="cidade-tag">CAMPINA GRANDE DO SUL</span><div class="rota-bairros-list"><strong>Bairros:</strong> Jardim Graciosa, Timbu Velho, Roseira, Jaguatirica</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-cmg">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Campo Magro</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Campo Magro</h2><span>Eixo Noroeste Metropolitano</span></div><div class="regiao-icon">⛰️</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[CMG]</span><span class="cidade-tag">CAMPO MAGRO</span><div class="rota-bairros-list"><strong>Bairros:</strong> Campo Magro, Santa Bárbara, Rio Verde</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-tamandare">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Almirante Tamandaré ([AL1] / [AL2])</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Almirante Tamandaré ([AL1] e [AL2])</h2><span>Eixo Norte / Rodovia dos Minérios</span></div><div class="regiao-icon">🏕️</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[AL1]</span><span class="cidade-tag">ALMIRANTE TAMANDARÉ</span><div class="rota-bairros-list"><strong>Bairros:</strong> Cachoeira, Campina do Arruda</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[AL2]</span><span class="cidade-tag">ALMIRANTE TAMANDARÉ</span><div class="rota-bairros-list"><strong>Bairros:</strong> Lamenha Grande, Tanguá</div></div>
+                </div>
+            </div>
+
+            <div class="regiao-page" id="met-itarubrasil">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região Metropolitana - Itaperuçu [ITA] & Rio Branco [RBS]</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Itaperuçu [ITA] & Rio Branco do Sul [RBS]</h2><span>Rotas Dedicadas Metropolitanas</span></div><div class="regiao-icon">📌</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[ITA]</span><span class="cidade-tag">ITAPERUCU</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Rua Bento Viana, São Domingos</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[RBS]</span><span class="cidade-tag">RIO BRANCO DO SUL</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Vila Ricarda, Johnson, Nodari II, Papanduva, Vila Buava</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ABA 3: LITORAL ================= -->
+        <div id="aba-litoral" class="tab-content">
+            <div class="print-controls">
+                <button class="btn-regiao active" onclick="mostrarRegiao('lit', 'todas', this)">🌐 Exibir Litoral</button>
+                <button class="btn-regiao btn-print-all" onclick="window.print()">🖨️ Imprimir Guia A4 Litoral</button>
+            </div>
+
+            <div class="regiao-page" id="lit-litoral">
+                <div class="print-header-badge"><span class="p-logo">TOTAL EXPRESS</span><span class="p-title">Região do Litoral - PR</span></div>
+                <div class="regiao-header"><div class="regiao-title"><h2>Região do Litoral</h2><span>Paranaguá, Pontal do Paraná, Guaratuba, Matinhos, Morretes e Guaraqueçaba</span></div><div class="regiao-icon">🏖️</div></div>
+                <div class="rotas-print-grid">
+                    <div class="rota-print-card"><span class="rota-badge-title">[PN2]</span><span class="cidade-tag">PARANAGUÁ</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Zona Portuária</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[PN3]</span><span class="cidade-tag">PARANAGUÁ</span><div class="rota-bairros-list"><strong>Bairros:</strong> Oceania, Estradas e Vilas</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[PN4]</span><span class="cidade-tag">PARANAGUÁ</span><div class="rota-bairros-list"><strong>Bairros:</strong> Expansão Urbana e Litoral</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[PAR]</span><span class="cidade-tag">PARANAGUÁ</span><div class="rota-bairros-list"><strong>Bairros:</strong> Núcleo Principal Paranaguá</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[PON]</span><span class="cidade-tag">PONTAL DO PARANÁ</span><div class="rota-bairros-list"><strong>Bairros:</strong> Guaraguaçu, Balneários e Praias</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[MAT]</span><span class="cidade-tag">MATINHOS</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Caiobá e Balneários</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[GUA]</span><span class="cidade-tag">GUARATUBA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro, Coroados e Região Praiana</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[MOR]</span><span class="cidade-tag">MORRETES</span><div class="rota-bairros-list"><strong>Bairros:</strong> Centro Histórico e Zona Rural</div></div>
+                    <div class="rota-print-card"><span class="rota-badge-title">[GQB]</span><span class="cidade-tag">GUARAQUEÇABA</span><div class="rota-bairros-list"><strong>Bairros:</strong> Área Continental e Ilhas</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ABA 4: ROTEIRIZAÇÃO LIVRE ================= -->
+        <div id="aba-livre" class="tab-content">
+            <div class="print-controls">
+                <button class="btn-regiao btn-print-all" onclick="window.print()">🖨️ Imprimir Quadro Atual A4</button>
+            </div>
+
+            <div class="kanban-container">
+                <div class="kanban-col">
+                    <h3>📦 Banco de Rotas Disponíveis</h3>
+                    <input type="text" class="search-box" id="filtro-rotas" placeholder="🔍 Buscar rota ou bairro..." onkeyup="filtrarBancoRotas()">
+                    <div id="banco-rotas-list" style="max-height: 600px; overflow-y: auto; padding-right: 5px;"></div>
+                </div>
+
+                <div class="kanban-col" style="border-top-color: #ffcc00;">
+                    <h3>📋 Quadro de Impressão A4 <button onclick="limparQuadro()" style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;">Limpar Quadro</button></h3>
+                    <p style="font-size:12px; color:#94a3b8; margin-bottom:12px;">Arraste as rotas do lado esquerdo para cá para compor a folha de identificação.</p>
+                    
+                    <div class="print-header-badge" style="margin-top:5px;">
+                        <span class="p-logo">TOTAL EXPRESS</span>
+                        <span class="p-title">(Roteirização Livre)</span>
+                    </div>
+
+                    <div class="drop-zone" id="quadro-impressao" ondragover="permitirDrop(event)" ondragleave="removerDestaqueDrop(event)" ondrop="soltarRota(event)">
+                        <div class="empty-drop-msg" id="msg-vazia">Arraste as rotas aqui para montar sua folha de identificação para a parede da base.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Guia Operacional de Expedição A4 — Total Express Curitiba, Região & Litoral
+        </footer>
+    </div>
+
+    <script>
+        const todasRotasBase = [
+            { id: "r0", codigo: "[01A]", cidade: "CURITIBA", bairros: "Bigorrilho" },
+            { id: "r1", codigo: "[02A]", cidade: "CURITIBA", bairros: "Abranches, Pilarzinho, Cachoeira" },
+            { id: "r2", codigo: "[03A]", cidade: "CURITIBA", bairros: "Ahú, Boa Vista, Cabral, Santa Cândida" },
+            { id: "r3", codigo: "[04A]", cidade: "CURITIBA", bairros: "Cabral, Juvevê" },
+            { id: "r4", codigo: "[05A]", cidade: "CURITIBA", bairros: "Bacacheri" },
+            { id: "r5", codigo: "[06A]", cidade: "CURITIBA", bairros: "Bairro Alto" },
+            { id: "r6", codigo: "[06E]", cidade: "CURITIBA", bairros: "Bairro Alto, Capão da Imbuia, Tarumã" },
+            { id: "r7", codigo: "[07A]", cidade: "CURITIBA", bairros: "Uberaba" },
+            { id: "r8", codigo: "[08A]", cidade: "CURITIBA", bairros: "Cristo Rei, Jardim Botânico" },
+            { id: "r9", codigo: "[08B]", cidade: "CURITIBA", bairros: "Juvevê" },
+            { id: "r10", codigo: "[09A]", cidade: "CURITIBA", bairros: "Água Verde, Rebouças" },
+            { id: "r11", codigo: "[10A]", cidade: "CURITIBA", bairros: "Campina do Siqueira, Cidade Industrial, São Braz" },
+            { id: "r12", codigo: "[11A]", cidade: "CURITIBA", bairros: "Centro, Lindóia, Araucária" },
+            { id: "r13", codigo: "[12A]", cidade: "CURITIBA", bairros: "Mossunguê" },
+            { id: "r14", codigo: "[12B]", cidade: "CURITIBA", bairros: "Campo Comprido" },
+            { id: "r15", codigo: "[13A]", cidade: "CURITIBA", bairros: "Água Verde, Batel" },
+            { id: "r16", codigo: "[14A]", cidade: "CURITIBA", bairros: "Xaxim" },
+            { id: "r17", codigo: "[15A]", cidade: "CURITIBA", bairros: "Boqueirão" },
+            { id: "r18", codigo: "[16A]", cidade: "CURITIBA", bairros: "Sítio Cercado, Jardim Botânico" },
+            { id: "r19", codigo: "[17A]", cidade: "CURITIBA", bairros: "Novo Mundo" },
+            { id: "r20", codigo: "[18A]", cidade: "CURITIBA", bairros: "Cidade Industrial, Fazendinha, Mossunguê, Augusta" },
+            { id: "r21", codigo: "[19A]", cidade: "CURITIBA", bairros: "Portão" },
+            { id: "r22", codigo: "[21A]", cidade: "CURITIBA", bairros: "Batel, Vila Izabel, Água Verde" },
+            { id: "r23", codigo: "[22A]", cidade: "CURITIBA", bairros: "Centro Cívico, Bom Retiro, Juvevê, Vista Alegre" },
+            { id: "r24", codigo: "[22B]", cidade: "CURITIBA", bairros: "Santa Felicidade, Bom Retiro, Centro Cívico, Butiatuvinha, Lamenha Pequena, São Francisco" },
+            { id: "r25", codigo: "[23A]", cidade: "CURITIBA", bairros: "Vista Alegre" },
+            { id: "r26", codigo: "[24A]", cidade: "CURITIBA", bairros: "Cidade Industrial, São Miguel, Canabrava, Vila Sabará" },
+            { id: "r27", codigo: "[25A]", cidade: "CURITIBA", bairros: "Bigorrilho, Mercês, Campina do Siqueira" },
+            { id: "r28", codigo: "[26A]", cidade: "CURITIBA", bairros: "Santa Cândida" },
+            { id: "r29", codigo: "[28A]", cidade: "CURITIBA", bairros: "Hauer" },
+            { id: "r30", codigo: "[29A]", cidade: "CURITIBA", bairros: "Umbará, Alto Boqueirão, Caximba, Campo de Santana, Ganchinho, Tingui" },
+            { id: "r31", codigo: "[32A]", cidade: "CURITIBA", bairros: "Santa Felicidade, Santo Inácio, Santa Quitéria" },
+            { id: "r32", codigo: "[33A]", cidade: "CURITIBA", bairros: "Guabirotuba" },
+            { id: "r33", codigo: "[38A]", cidade: "CURITIBA", bairros: "Cajuru" },
+            { id: "r34", codigo: "[40A]", cidade: "CURITIBA", bairros: "Atuba, Bairro Alto" },
+            { id: "r35", codigo: "[41A]", cidade: "CURITIBA", bairros: "Jardim das Américas" },
+            { id: "r36", codigo: "[41D]", cidade: "CURITIBA", bairros: "Boqueirão" },
+            { id: "r37", codigo: "[41E]", cidade: "CURITIBA", bairros: "Boqueirão" },
+            { id: "r38", codigo: "[45A]", cidade: "CURITIBA", bairros: "Alto da Rua XV" },
+            { id: "r39", codigo: "[47A]", cidade: "CURITIBA", bairros: "Pinheirinho" },
+            { id: "r40", codigo: "[48A]", cidade: "CURITIBA", bairros: "Seminário" },
+            { id: "r41", codigo: "[49A]", cidade: "CURITIBA", bairros: "Barreirinha, Abranches" },
+            { id: "r42", codigo: "[SJ1]", cidade: "SÃO JOSÉ DOS PINHAIS", bairros: "Centro, Afonso Pena, Boneca do Iguaçu, Quissisana" },
+            { id: "r43", codigo: "[SJ2]", cidade: "SÃO JOSÉ DOS PINHAIS", bairros: "Rio Pequeno, Jurema, Aristocrata, Costeira" },
+            { id: "r44", codigo: "[SJ3]", cidade: "SÃO JOSÉ DOS PINHAIS", bairros: "Guatupê, Cachoeira, Mergulhão, Tomás Coelho" },
+            { id: "r45", codigo: "[SJ4]", cidade: "SÃO JOSÉ DOS PINHAIS", bairros: "Iná, Murici, Campo Largo da Roseira, Roseira" },
+            { id: "r46", codigo: "[SJ5]", cidade: "SÃO JOSÉ DOS PINHAIS", bairros: "Zaniolo, Afonso Pena, Quissisana" },
+            { id: "r47", codigo: "[SJ6]", cidade: "SÃO JOSÉ DOS PINHAIS", bairros: "Área Rural, Miringuava, Campo Largo da Roseira" },
+            { id: "r48", codigo: "[PH1]", cidade: "PINHAIS", bairros: "Vargem Grande, Jardim Cláudia, Centro, Emiliano Perneta" },
+            { id: "r49", codigo: "[PH3]", cidade: "PINHAIS", bairros: "Alto Tarumã, Maria Antonieta, Pineville" },
+            { id: "r50", codigo: "[AR1]", cidade: "ARAUCÁRIA", bairros: "Costeira, Campina da Barra, Iguaçu" },
+            { id: "r51", codigo: "[AR2]", cidade: "ARAUCÁRIA", bairros: "Centro, Costeira, Campina da Barra, Iguaçu, Tindiquera" },
+            { id: "r52", codigo: "[CGS]", cidade: "CAMPINA GRANDE DO SUL", bairros: "Jardim Graciosa, Timbu Velho, Roseira, Jaguatirica" },
+            { id: "r53", codigo: "[CB1]", cidade: "COLOMBO", bairros: "Centro, Roça Grande, Gabirobal, Imbuial" },
+            { id: "r54", codigo: "[CB3]", cidade: "COLOMBO", bairros: "Guarani, Atuba, Palmital, São Gabriel, Santa Terezinha" },
+            { id: "r55", codigo: "[PR1]", cidade: "PIRAQUARA", bairros: "Guarituba, Jardim Itiberê, Planta Vera Cruz" },
+            { id: "r56", codigo: "[PR2]", cidade: "PIRAQUARA", bairros: "Guarituba, Planta Vera Cruz, Vila Vicente Macedo" },
+            { id: "r57", codigo: "[AL1]", cidade: "ALMIRANTE TAMANDARÉ", bairros: "Cachoeira, Campina do Arruda" },
+            { id: "r58", codigo: "[AL2]", cidade: "ALMIRANTE TAMANDARÉ", bairros: "Lamenha Grande, Tanguá" },
+            { id: "r59", codigo: "[CMG]", cidade: "CAMPO MAGRO", bairros: "Campo Magro, Santa Bárbara, Rio Verde" },
+            { id: "r60", codigo: "[CP1]", cidade: "CAMPO LARGO", bairros: "Centro, Cristo Rei, Jardim Esmeralda, Vila Itaqui" },
+            { id: "r61", codigo: "[CP3]", cidade: "CAMPO LARGO", bairros: "Bateias, Vila Dom Pedro, Vila Elizabeth" },
+            { id: "r62", codigo: "[FA1]", cidade: "FAZENDA RIO GRANDE", bairros: "Estados, Iguaçu, Santa Terezinha, Pioneiros" },
+            { id: "r63", codigo: "[FA2]", cidade: "FAZENDA RIO GRANDE", bairros: "Eucaliptos, Nações, Gralha Azul" },
+            { id: "r64", codigo: "[ITA]", cidade: "ITAPERUÇU", bairros: "Centro, Rua Bento Viana, São Domingos" },
+            { id: "r65", codigo: "[RBS]", cidade: "RIO BRANCO DO SUL", bairros: "Centro, Vila Ricarda, Johnson, Nodari II, Papanduva, Vila Buava" },
+            { id: "r66", codigo: "[PN2]", cidade: "PARANAGUÁ", bairros: "Centro, Zona Portuária" },
+            { id: "r67", codigo: "[PN3]", cidade: "PARANAGUÁ", bairros: "Oceania, Estradas e Vilas" },
+            { id: "r68", codigo: "[PN4]", cidade: "PARANAGUÁ", bairros: "Expansão Urbana e Litoral" },
+            { id: "r69", codigo: "[PAR]", cidade: "PARANAGUÁ", bairros: "Núcleo Principal Paranaguá" },
+            { id: "r70", codigo: "[PON]", cidade: "PONTAL DO PARANÁ", bairros: "Guaraguaçu, Balneários e Praias" },
+            { id: "r71", codigo: "[MAT]", cidade: "MATINHOS", bairros: "Centro, Caiobá e Balneários" },
+            { id: "r72", codigo: "[GUA]", cidade: "GUARATUBA", bairros: "Centro, Coroados e Região Praiana" },
+            { id: "r73", codigo: "[MOR]", cidade: "MORRETES", bairros: "Centro Histórico e Zona Rural" },
+            { id: "r74", codigo: "[GQB]", cidade: "GUARAQUEÇABA", bairros: "Área Continental e Ilhas" }
+        ];
+
+        function mudarAba(idAba, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(idAba).classList.add('active-tab');
+            btnElement.classList.add('active');
+        }
+
+        function mostrarRegiao(pref, regiao, btn) {
+            const containerId = pref === 'cwb' ? '#aba-curitiba' : '#aba-metropolitana';
+            const pageClass = '.regiao-page';
+
+            document.querySelectorAll(containerId + ' .btn-regiao').forEach(b => {
+                if(!b.classList.contains('btn-print-all')) b.classList.remove('active');
+            });
+            if(!btn.classList.contains('btn-print-all')) btn.classList.add('active');
+
+            const pages = document.querySelectorAll(containerId + ' ' + pageClass);
+            pages.forEach(page => {
+                if (regiao === 'todas' || page.id === pref + '-' + regiao) {
+                    page.classList.remove('hidden');
+                } else {
+                    page.classList.add('hidden');
+                }
+            });
+        }
+
+        function renderizarBancoRotas(rotasParaMostrar = todasRotasBase) {
+            const container = document.getElementById('banco-rotas-list');
+            if(!container) return;
+            container.innerHTML = '';
+
+            rotasParaMostrar.forEach(rota => {
+                const card = document.createElement('div');
+                card.className = 'draggable-card';
+                card.draggable = true;
+                card.dataset.id = rota.id;
+                card.innerHTML = `
+                    <span class="cidade-tag">${rota.cidade}</span>
+                    <div style="font-weight:900; font-size:14px; color:#ffcc00; margin-bottom:4px;">${rota.codigo}</div>
+                    <div style="font-size:11px; color:#cbd5e1;"><strong>Bairros:</strong> ${rota.bairros}</div>
+                `;
+                card.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', rota.id);
+                });
+                container.appendChild(card);
+            });
+        }
+
+        function filtrarBancoRotas() {
+            const termo = document.getElementById('filtro-rotas').value.toLowerCase();
+            const filtradas = todasRotasBase.filter(r => 
+                r.codigo.toLowerCase().includes(termo) || 
+                r.bairros.toLowerCase().includes(termo) || 
+                r.cidade.toLowerCase().includes(termo)
+            );
+            renderizarBancoRotas(filtradas);
+        }
+
+        function permitirDrop(e) {
+            e.preventDefault();
+            document.getElementById('quadro-impressao').classList.add('drag-over');
+        }
+
+        function removerDestaqueDrop(e) {
+            document.getElementById('quadro-impressao').classList.remove('drag-over');
+        }
+
+        function soltarRota(e) {
+            e.preventDefault();
+            document.getElementById('quadro-impressao').classList.remove('drag-over');
+            const rotaId = e.dataTransfer.getData('text/plain');
+            const rotaObj = todasRotasBase.find(r => r.id === rotaId);
+
+            if (rotaObj) {
+                adicionarAoQuadro(rotaObj);
+            }
+        }
+
+        function adicionarAoQuadro(rota) {
+            const quadro = document.getElementById('quadro-impressao');
+            const msgVazia = document.getElementById('msg-vazia');
+            if (msgVazia) msgVazia.style.display = 'none';
+
+            const jaExiste = quadro.querySelector(`[data-cadastrado-id="${rota.id}"]`);
+            if (jaExiste) {
+                alert('Esta rota já está adicionada no quadro de impressão!');
+                return;
+            }
+
+            const item = document.createElement('div');
+            item.className = 'drop-item';
+            item.dataset.cadastradoId = rota.id;
+            item.innerHTML = `
+                <button class="btn-remove" onclick="removerDoQuadro(this)" title="Remover">X</button>
+                <span class="rota-badge-title">${rota.codigo}</span>
+                <div class="rota-bairros-list"><strong>Bairros Atendidos:</strong> ${rota.bairros}</div>
+            `;
+
+            quadro.appendChild(item);
+        }
+
+        function removerDoQuadro(btn) {
+            const item = btn.parentElement;
+            item.remove();
+            const quadro = document.getElementById('quadro-impressao');
+            if (quadro.querySelectorAll('.drop-item').length === 0) {
+                const msgVazia = document.getElementById('msg-vazia');
+                if (msgVazia) msgVazia.style.display = 'block';
+            }
+        }
+
+        function limparQuadro() {
+            const quadro = document.getElementById('quadro-impressao');
+            quadro.querySelectorAll('.drop-item').forEach(i => i.remove());
+            const msgVazia = document.getElementById('msg-vazia');
+            if (msgVazia) msgVazia.style.display = 'block';
+        }
+
+        window.onload = function() {
+            renderizarBancoRotas();
+        };
+    </script>
+
+</body>
+</html>
